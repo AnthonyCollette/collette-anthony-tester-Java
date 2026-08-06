@@ -86,4 +86,21 @@ public class TicketDAO {
         }
         return false;
     }
+
+    public int getNbTicket(String vehicleRegNumber) {
+        Connection con = null;
+        int nbTicket = 0;
+        try {
+            con = dataBaseConfig.getConnection();
+            PreparedStatement ps = con.prepareStatement(DBConstants.CHECK_VEHICULE_EXISTS);
+            ps.setString(1, vehicleRegNumber);
+            ResultSet rs = ps.executeQuery();
+            nbTicket = rs.getInt("nbTicket");
+        } catch (Exception ex){
+            logger.error("Error receiving number tickets");
+        } finally {
+            dataBaseConfig.closeConnection(con);
+        }
+        return nbTicket;
+    }
 }
