@@ -95,7 +95,11 @@ public class TicketDAO {
             PreparedStatement ps = con.prepareStatement(DBConstants.CHECK_VEHICULE_EXISTS);
             ps.setString(1, vehicleRegNumber);
             ResultSet rs = ps.executeQuery();
-            nbTicket = rs.getInt("nbTicket");
+            if (rs.next()) {
+                nbTicket = rs.getInt("nbTicket");
+            }
+            dataBaseConfig.closeResultSet(rs);
+            dataBaseConfig.closePreparedStatement(ps);
         } catch (Exception ex){
             logger.error("Error receiving number tickets");
         } finally {
