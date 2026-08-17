@@ -36,13 +36,10 @@ public class ParkingServiceTest {
     @BeforeEach
     private void setUpPerTest() {
         try {
-
-
             ParkingSpot parkingSpot = new ParkingSpot(1, ParkingType.CAR,false);
             ticket.setInTime(new Date(System.currentTimeMillis() - (60*60*1000)));
             ticket.setParkingSpot(parkingSpot);
             ticket.setVehicleRegNumber("ABCDEF");
-
 
             parkingService = new ParkingService(inputReaderUtil, parkingSpotDAO, ticketDAO);
         } catch (Exception e) {
@@ -61,7 +58,9 @@ public class ParkingServiceTest {
 
         parkingService.processExitingVehicle();
 
+        //Check if getNbTicket() is called one time
         verify(ticketDAO, Mockito.times(1)).getNbTicket(anyString());
+        //Check if updateParking() is called one time
         verify(parkingSpotDAO, Mockito.times(1)).updateParking(any(ParkingSpot.class));
     }
 
@@ -75,8 +74,11 @@ public class ParkingServiceTest {
 
         parkingService.processIncomingVehicle();
 
+        //Check if updateParking() is called one time
         verify(parkingSpotDAO, Mockito.times(1)).updateParking(any(ParkingSpot.class));
+        //Check if getNbTicket() is called one time
         verify(ticketDAO, Mockito.times(1)).getNbTicket(anyString());
+        //Check if saveTicket() is called one time
         verify(ticketDAO, Mockito.times(1)).saveTicket(any(Ticket.class));
     }
 
@@ -89,6 +91,7 @@ public class ParkingServiceTest {
 
         parkingService.processExitingVehicle();
 
+        //Check if updateParking() is never called
         verify(parkingSpotDAO, Mockito.times(0)).updateParking(any(ParkingSpot.class));
     }
 
@@ -99,7 +102,9 @@ public class ParkingServiceTest {
 
         ParkingSpot result = parkingService.getNextParkingNumberIfAvailable();
 
+        //Check if parkingSpot id is 1
         assertEquals(1, result.getId());
+        //Check if parkingSpot is available
         assertTrue(result.isAvailable());
     }
 
@@ -110,7 +115,9 @@ public class ParkingServiceTest {
 
         ParkingSpot result = parkingService.getNextParkingNumberIfAvailable();
 
+        //Check if parking spot is null
         assertNull(result);
+        //Check if getNextAvailableSlot() is called one time
         verify(parkingSpotDAO, Mockito.times(1)).getNextAvailableSlot(any(ParkingType.class));
     }
 
@@ -120,7 +127,9 @@ public class ParkingServiceTest {
 
         ParkingSpot result = parkingService.getNextParkingNumberIfAvailable();
 
+        //Check if parkingSpot is null
         assertNull(result);
+        //Check if getNextAvailableSlot() is never called
         verify(parkingSpotDAO, Mockito.times(0)).getNextAvailableSlot(any(ParkingType.class));
     }
 }

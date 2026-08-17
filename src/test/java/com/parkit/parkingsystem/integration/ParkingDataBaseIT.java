@@ -60,9 +60,13 @@ public class ParkingDataBaseIT {
         ParkingService parkingService = new ParkingService(inputReaderUtil, parkingSpotDAO, ticketDAO);
         parkingService.processIncomingVehicle();
         Ticket ticket = ticketDAO.getTicket("ABCDEF");
+        //Check if ticket is not null
         assertNotNull(ticket);
+        //Check if vehicleRegNumber is "ABCDEF"
         assertEquals("ABCDEF", ticket.getVehicleRegNumber());
+        //Check if parkingSpot is not available
         assertFalse(ticket.getParkingSpot().isAvailable());
+        //Check if inTime is not null
         assertNotNull(ticket.getInTime());
     }
 
@@ -71,7 +75,7 @@ public class ParkingDataBaseIT {
         Ticket ticket = new Ticket();
         ParkingSpot parkingSpot = new ParkingSpot(1, ParkingType.CAR, true);
         ticket.setParkingSpot(parkingSpot);
-        // Setup inTime 1h before
+        // Setup inTime 1h ago
         ticket.setInTime(new Date(System.currentTimeMillis() - 1000 * 60 * 60));
         ticket.setOutTime(new Date());
         ticket.setVehicleRegNumber("ABCDEF");
@@ -81,7 +85,9 @@ public class ParkingDataBaseIT {
 
         Ticket updatedTicket = ticketDAO.getTicket("ABCDEF");
 
+        //Check if price is >= 0
         assertTrue(updatedTicket.getPrice() >= 0);
+        //Check if outTime is not null
         assertNotNull(updatedTicket.getOutTime());
     }
 
@@ -90,16 +96,16 @@ public class ParkingDataBaseIT {
         Ticket oldTicket = new Ticket();
         ParkingSpot parkingSpot = new ParkingSpot(1, ParkingType.CAR, true);
         oldTicket.setParkingSpot(parkingSpot);
-        // Setup oldTicket inTime 5h before
+        // Setup oldTicket inTime 5h ago
         oldTicket.setInTime(new Date(System.currentTimeMillis() - 1000 * 60 * 60 * 5));
-        // Setup oldTicket outTime 4h before
+        // Setup oldTicket outTime 4h ago
         oldTicket.setOutTime(new Date(System.currentTimeMillis() - 1000 * 60 * 60 * 4));
         oldTicket.setVehicleRegNumber("ABCDEF");
         ticketDAO.saveTicket(oldTicket);
 
         Ticket ticket = new Ticket();
         ticket.setParkingSpot(parkingSpot);
-        // Setup ticket inTime 1h before
+        // Setup ticket inTime 1h ago
         ticket.setInTime(new Date(System.currentTimeMillis() - 1000 * 60 * 60));
         ticket.setVehicleRegNumber("ABCDEF");
         ticketDAO.saveTicket(ticket);
